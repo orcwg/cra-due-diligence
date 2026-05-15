@@ -5,7 +5,7 @@ the Cyber Resilience SIG of ORC WG.
 
 ## Abstract
 
-> This is a copy of the original abrtract from [here](https://github.com/orcwg/orcwg/blob/main/cyber-resilience-sig/whitepapers/due-diligence.md).
+> This is a copy of the original abstract from [here](https://github.com/orcwg/orcwg/blob/main/cyber-resilience-sig/whitepapers/due-diligence.md).
 
 The due diligence obligation of manufacturers outlined in [Article 13(5)][] of the CRA is the cornerstone of the relationship between manufacturers and the open source ecosystem.
 
