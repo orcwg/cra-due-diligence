@@ -1,11 +1,11 @@
 site_name: White paper on due diligence obligation of manufacturers
 nav:
-  - Chapter 1: 01.md
-  - Chapter 2: 02.md
-  - Chapter 3: 03.md
-  - Chapter 4: 04.md
-  - Chapter 5: 05.md
-  - Chapter 6: 06.md
+  - Chapter 1 - What is due diligence: 01.md
+  - Chapter 2 - To what do we apply due diligence: 02.md
+  - Chapter 3 - What and how to record due diligence, evidence: 03.md
+  - Chapter 4 - What happens when due diligence fails: 04.md
+  - Chapter 5 - How open source projects and stewards can help manufacturers to achieve due diligence: 05.md
+  - Chapter 6 - Additional aspects/references: 06.md
 
 docs_dir: content
 site_author: Eclipse Foundation | ORC WG | Cyber Resilience SIG
