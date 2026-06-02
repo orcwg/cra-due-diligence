@@ -1,8 +1,15 @@
 # Introduction
 
+Due diligence is a process for manufacturers to select third party components with the appropriate
+security posture. Due diligence carried out during the development phase of the product creation
+before the integration of third party components and the release of the product.
+It is the manufacturers responsibility to define the needed due diligence to ensure the appropriate
+level of cybersecurity of their products. In order to minimise and assess risks, manufacturers wants to
+do due diligence of both commercial and open source dependencies.
+
 CRA puts due diligence as an obligation to manufacturers, but it does not give further concrete
-guidance on what due diligence is. In order to minimise and assess risks, manufacturers wants to
-do due diligence of both commercial and open source dependencies. At the time of writing also
-the harmonized standards seem not to provide concrete enough guidelines about due diligence. This
-document aims to collaboratively build an industry consensus on the proper due diligence of open
-source components. 
+guidance on what due diligence is.  At the time of writing also the harmonized standards seem not to
+provide concrete enough guidelines about due diligence.
+This whitepaper aims to to collaboratively build an industry consensus on the proper due diligence of open
+source components and provide guidance and inspiration for the manufacturer community to reach appropriate
+due diligence.
