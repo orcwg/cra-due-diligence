@@ -32,4 +32,4 @@ The actual text of whitepaper is in the [content] folder. Every chapter of the w
 [EU Commission]: ../README.md#key-stakeholders
 [CRA Expert Group]: ../README.md#cra-expert-group
 [Specification on generic security requirements for open source components]: ../proposed-specs/generic-security-requirements.md
-[security attestations]: ./security-attestations.md
+[security attestations]: https://github.com/orcwg/cra-attestations
