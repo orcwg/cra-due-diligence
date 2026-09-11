@@ -1,5 +1,12 @@
 # Introduction
 
+!!! note "Document status"
+
+    This document is draft and under continous development by a community effort within the [ORC WG](https://orcwg.org/)
+    Vulnerability Handling Task Force. Ongoing change requests are handled as
+    [GitHub Pull Requests](https://github.com/orcwg/cra-due-diligence/pulls) and open issues are
+    [GitHub issues](https://github.com/orcwg/cra-due-diligence/issues).
+
 Due diligence is a process for manufacturers to select third party components with the appropriate
 security posture. Due diligence is carried out during the development phase of the product creation
 before the integration of third party components and the release of the product.
