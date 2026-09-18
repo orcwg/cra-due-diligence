@@ -2,7 +2,7 @@
 
 !!! note "Document status"
 
-    This document is draft and under continous development by a community effort within the [ORC WG](https://orcwg.org/)
+    This document is a draft and under continous development by a community effort within the [ORC WG](https://orcwg.org/)
     Vulnerability Handling Task Force. Ongoing change requests are handled as
     [GitHub Pull Requests](https://github.com/orcwg/cra-due-diligence/pulls) and open issues are
     [GitHub issues](https://github.com/orcwg/cra-due-diligence/issues).
