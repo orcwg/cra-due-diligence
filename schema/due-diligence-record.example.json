@@ -1,0 +1,67 @@
+{
+  "schema_revision": "0.1",
+  "component": {
+    "purl": "pkg:github/example-org/libexample-parser@2.4.1"
+  },
+  "risk": {
+    "level": "high",
+    "reason": "Parses untrusted network input in a privileged process."
+  },
+  "final_result": {
+    "outcome": "acceptable_with_actions",
+    "rationale": "One advisory outstanding; reported upstream and mitigated by input length limits."
+  },
+  "maintainer_metadata": [
+    {
+      "field": "security_contact",
+      "value": "security@example.org",
+      "source": "https://github.com/example-org/libexample-parser/blob/v2.4.1/SECURITY.md",
+      "read_on": "2026-10-01"
+    }
+  ],
+  "properties_checked": [
+    {
+      "property": "Project identity and authenticity",
+      "outcome": "satisfied",
+      "source": "https://github.com/example-org/libexample-parser",
+      "checked_on": "2026-10-01"
+    },
+    {
+      "property": "Vulnerability handling",
+      "outcome": "nil_result",
+      "source": "https://euvd.enisa.europa.eu/ (search: libexample-parser)",
+      "checked_on": "2026-10-01"
+    },
+    {
+      "property": "Development practices",
+      "outcome": "not_satisfied",
+      "source": "https://github.com/example-org/libexample-parser/actions",
+      "checked_on": "2026-10-01",
+      "evidence": {
+        "algorithm": "sha256",
+        "value": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+      },
+      "action_taken": "Reported to the maintainers on 2026-10-02; input length limits added in the integrating product."
+    },
+    {
+      "property": "Additional security test: fuzzing of the packet parser",
+      "outcome": "satisfied",
+      "source": "manufacturer's fuzzing harness",
+      "checked_on": "2026-10-01",
+      "test_run": {
+        "inputs": "corpus of 40,000 captured packets, 24 hours"
+      },
+      "evidence": {
+        "algorithm": "sha256",
+        "value": "fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9"
+      }
+    }
+  ],
+  "performed": {
+    "by": "Supply chain security team",
+    "at": "2026-10-01T09:30:00Z",
+    "tools": [
+      { "name": "osv-scanner", "version": "1.9.2" }
+    ]
+  }
+}
