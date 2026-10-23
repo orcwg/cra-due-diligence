@@ -1,0 +1,86 @@
+name: Check the appendix A example
+
+# Appendix A gives an example: an integrator runs a pinned release of a project's test vectors
+# against the component it ships, and the build fails when a rule is no longer enforced. This
+# job runs that example in two steps, so the commands and numbers in the appendix stay true. All vectors must pass against the component, and
+# exactly one must fail against a copy of it with one check removed.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - content/appendix-a.md
+      - .github/workflows/check-appendix-a-example.yml
+
+permissions:
+  contents: read
+
+env:
+  # Release v0.25.0 of probityai/agent-evidence-vectors, by commit. The PyPI release of the same
+  # number carries the vectors and the harness. The repository at that commit carries the
+  # verifier that stands in for the integrator's component.
+  RELEASE_COMMIT: e7508ced37dacc89decacd857e97930860ee08cd
+  VECTORS_VERSION: 0.25.0
+  # The one check removed from the copy: commitments.go, commitmentArrayOK, the guard that a
+  # commitment list is non-empty, sorted and free of duplicates.
+  REMOVED_CHECK: commitments.go::commitmentArrayOK::IF_OFF::26d797c24e4d
+  EXPECTED_TO_FAIL: v0ac6d948f2af5b6f
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Build the component and a copy with one check removed
+        run: |
+          git init -q vectors-src
+          cd vectors-src
+          git fetch -q --depth 1 https://github.com/probityai/agent-evidence-vectors.git "$RELEASE_COMMIT"
+          git -c advice.detachedHead=false checkout -q FETCH_HEAD
+          go build -o "$RUNNER_TEMP/component" ./cmd/aee-verify
+          go run ./cmd/mutgen -pkg aee -apply "$REMOVED_CHECK" -write
+          go build -o "$RUNNER_TEMP/component-one-check-removed" ./cmd/aee-verify
+
+      - name: Run the vectors against the component
+        run: |
+          pip install uv
+          status=0
+          uvx --python 3.13 agent-evidence-vectors=="$VECTORS_VERSION" \
+            --verifier "$RUNNER_TEMP/component -validity-only -json" > component.txt || status=$?
+          grep -E '^(totals|verifier):' component.txt
+          {
+            echo "### Component: every vector must pass"
+            echo
+            grep -E '^(totals|verifier):' component.txt | sed 's/^/    /'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Run the vectors against the copy with one check removed
+        run: |
+          status=0
+          uvx --python 3.13 agent-evidence-vectors=="$VECTORS_VERSION" \
+            --verifier "$RUNNER_TEMP/component-one-check-removed -validity-only -json" > removed.txt || status=$?
+          # Only the status column (the second) is a vector's result; the stage columns after it
+          # are diagnostics and can read FAIL on a passing vector.
+          failed=$(awk '$2 == "FAIL" {print $1}' removed.txt)
+          grep -E '^(totals|verifier):' removed.txt
+          echo "Failing vector: ${failed:-none}"
+          {
+            echo "### Copy with one check removed: exactly one vector must fail"
+            echo
+            grep -E '^(totals|verifier):' removed.txt | sed 's/^/    /'
+            echo
+            echo "Failing vector: ${failed:-none}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$status" -eq 1
+          test "$failed" = "$EXPECTED_TO_FAIL"
