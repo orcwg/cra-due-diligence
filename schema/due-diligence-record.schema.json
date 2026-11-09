@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/orcwg/cra-due-diligence/main/schema/due-diligence-record.schema.json",
+  "title": "Due diligence record for an integrated component",
+  "description": "A machine-readable form of the record that chapter 3 of this white paper proposes a manufacturer keeps when it exercises Article 13(5) due diligence on a third-party component. One object per component version. The record holds no product information: one component can be integrated into many products, so each product keeps its own list of the records it relies on. The CRA does not enumerate fields for this record, so this schema is a proposal that follows that chapter's table, not a reading of the regulation. Its rules come from the chapter: a record identifies the component by its PURL with the exact version and states when the check was made, every component keeps a final result with its risk level and the reason for it, a component above low risk keeps one entry per property checked, and bulky evidence stays outside the record, named by digest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_revision", "component", "risk", "final_result", "performed"],
+  "properties": {
+    "schema_revision": {
+      "description": "The revision of this schema the record was written against.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "component": { "$ref": "#/$defs/component" },
+    "risk": {
+      "description": "The level of due diligence applied and why. Recital 34 makes the appropriate level depend on the nature and level of cybersecurity risk of the component. The level is itself a finding, so its reason is always recorded, low risk included.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "reason"],
+      "properties": {
+        "level": { "enum": ["low", "medium", "high"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "final_result": {
+      "description": "What the manufacturer decided about the component. The outcome of each property checked is what the decision rested on.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome"],
+      "properties": {
+        "outcome": { "enum": ["acceptable", "acceptable_with_actions", "not_acceptable"] },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "maintainer_metadata": {
+      "description": "Each maintainer-controlled field the manufacturer relied on, such as the security contact or the source repository, as read, with where and when. These values change upstream without a new release, so the record shows what the manufacturer relied on at the time of the check.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "value", "source", "read_on"],
+        "properties": {
+          "field": { "type": "string", "minLength": 1 },
+          "value": { "type": "string" },
+          "source": { "type": "string", "minLength": 1 },
+          "read_on": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "properties_checked": {
+      "description": "One short entry per property checked, from the properties chapter 1 lists. A component at low risk may omit this list, and a component above low risk may not.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/property_entry" }
+    },
+    "performed": {
+      "description": "Who or what performed the check, the date and time it was performed, and the version of any tool used. What a check finds describes the project at that moment and can change afterwards, and two versions of a scanner give two answers about the same component.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["by", "at"],
+      "properties": {
+        "by": { "type": "string", "minLength": 1 },
+        "at": { "type": "string", "format": "date-time" },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "version": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "Above low risk, each property checked is one entry. A record that omits them is indistinguishable from an assessment that skipped them.",
+      "if": {
+        "properties": { "risk": { "properties": { "level": { "enum": ["medium", "high"] } } } },
+        "required": ["risk"]
+      },
+      "then": { "required": ["properties_checked"] }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "description": "A cryptographic digest naming a file kept outside the record.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "enum": ["sha256", "sha384", "sha512", "sha3-256"] },
+        "value": { "type": "string", "pattern": "^[0-9a-f]{64,128}$" }
+      }
+    },
+    "component": {
+      "description": "The component, identified by its Package URL (PURL, https://github.com/package-url/purl-spec) and nothing else. The PURL carries the exact version, because a version range such as 2.x covers many releases and cannot be re-checked against the one that shipped. Where an artefact digest is wanted, the PURL's checksum qualifier carries it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purl"],
+      "properties": {
+        "purl": {
+          "description": "A PURL with a version, for example pkg:github/example-org/libexample-parser@2.4.1.",
+          "type": "string",
+          "pattern": "^pkg:[A-Za-z][A-Za-z0-9.+-]*/[^@?#]+@[^?#]+([?#].*)?$"
+        }
+      }
+    },
+    "property_entry": {
+      "description": "The outcome of one property checked. A nil outcome is a check that ran, and an omission is not distinguishable from one that never ran.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["property", "outcome", "source", "checked_on"],
+      "properties": {
+        "property": { "type": "string", "minLength": 1 },
+        "outcome": { "enum": ["satisfied", "nil_result", "not_satisfied", "not_applicable"] },
+        "source": {
+          "description": "The source read. An outcome read from a public source can be looked up again, so the entry is its own evidence.",
+          "type": "string",
+          "minLength": 1
+        },
+        "checked_on": { "type": "string", "format": "date" },
+        "test_run": {
+          "description": "Set for an additional security test the manufacturer ran, whose result only the party running it observed. The inputs are recorded so someone else can repeat the test against the component version the record names.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inputs"],
+          "properties": {
+            "inputs": { "type": "string", "minLength": 1 }
+          }
+        },
+        "evidence": { "$ref": "#/$defs/digest" },
+        "reason_not_applicable": { "type": "string", "minLength": 1 },
+        "action_taken": {
+          "description": "What was done about a finding, which under Recital 34 includes informing the person or entity manufacturing or maintaining the component.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "description": "Bulky material is kept only where a lookup cannot reproduce it, and then named by digest: a property that failed, one judged not applicable, or a test the manufacturer ran.",
+          "if": {
+            "anyOf": [
+              { "properties": { "outcome": { "enum": ["not_satisfied", "not_applicable"] } }, "required": ["outcome"] },
+              { "required": ["test_run"] }
+            ]
+          },
+          "then": { "required": ["evidence"] }
+        },
+        {
+          "description": "A property that failed records what was done about it.",
+          "if": { "properties": { "outcome": { "const": "not_satisfied" } }, "required": ["outcome"] },
+          "then": { "required": ["action_taken"] }
+        },
+        {
+          "description": "A property judged not applicable says why.",
+          "if": { "properties": { "outcome": { "const": "not_applicable" } }, "required": ["outcome"] },
+          "then": { "required": ["reason_not_applicable"] }
+        }
+      ]
+    }
+  }
+}
