@@ -34,4 +34,4 @@ An integrator whose product embeds a library that verifies signed records pins o
 When the build fails, the runner names the vector whose result changed.
 The integrator records the run in the due diligence record from chapter 3, with the output referenced by its digest.
 
-The vector set is at https://github.com/probityai/agent-evidence-vectors and is installed with `pip install agent-evidence-vectors==0.26.0`.
+The vector set is at https://github.com/probityai/agent-evidence-vectors and is installed with `pip install agent-evidence-vectors==0.37.1`.
