@@ -27,6 +27,12 @@ This is a draft document and may be updated, replaced or obsoleted at any time. 
 
 The actual text of whitepaper is in the [content] folder. Every chapter of the whitepaper have its own markdown file.  
 
+## Meeting minutes
+
+The content and development of this whitepaper is done in the Vulnerability Task Force of the ORC WG.
+The meeting minutes of the Vulnerability Task Force are stored
+[here](https://github.com/orcwg/orcwg/tree/main/cyber-resilience-sig/task-forces/vulnerability-handling-tf/minutes). 
+
 
 [Article 13(5)]: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202402847#art_13
 [EU Commission]: ../README.md#key-stakeholders
