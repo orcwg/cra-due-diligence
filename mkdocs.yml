@@ -6,6 +6,7 @@ nav:
   - Chapter 4 - What happens when due diligence fails: 04.md
   - Chapter 5 - How open source projects and stewards can help manufacturers to achieve due diligence: 05.md
   - Chapter 6 - Additional aspects/references: 06.md
+  - Appendix A - Running a project's test vectors in an integrator's build: appendix-a.md
 
 docs_dir: content
 site_author: Eclipse Foundation | ORC WG | Cyber Resilience SIG
